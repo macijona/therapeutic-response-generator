@@ -1,17 +1,21 @@
 import streamlit as st
-from langchain.document_loaders import DataFrameLoader
 from langchain.document_loaders.csv_loader import CSVLoader
-from langchain.vectorstores import FAISS # to locally store the vector database
+from langchain.vectorstores import FAISS
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 from dotenv import load_dotenv
-import pandas as pd
-from encode_newline_escape import clean_file_path
+from encode_newline_escape import filePreparer
 
 load_dotenv()
+
+file_path = 'patient_therapist.csv'
+clean_file_path = "clean_"+file_path
 extension_file_path = "depression.csv"
+
+# 0. Clean file for extraction
+filePreparer.clean_file(file_path, clean_file_path)
 
 # 1. Vectorise the patient/therapist csv data
 loader = CSVLoader(clean_file_path, encoding="utf8") # DataFrameLoader(df)
@@ -70,12 +74,6 @@ def generate_response(message):
 
 # 5. Build an app with streamlit
 def main():
-    # msg = "I like to drive around my city at night to reflect and listen to my thoughts. Is this healthy?"
-    # result = generate_response(msg)
-    # print(msg)
-    # print()
-    # print(result)
-    # return
     st.set_page_config(
         page_title="Therapeutic response generator", page_icon=":bird:")
 
@@ -84,9 +82,7 @@ def main():
 
     if message:
         st.write("Generating best practice message...")
-
         result = generate_response(message)
-
         st.info(result)
 
 
