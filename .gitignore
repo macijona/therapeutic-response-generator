@@ -1,0 +1,5 @@
+# ignore file realted to API keys
+.env
+
+# ignore py cache
+__pycache__
